@@ -1336,4 +1336,3 @@ age,sex,bmi,children,smoker,region,charges
 18,1,31.92,0,0,northeast,2205.9808
 18,1,36.85,0,0,southeast,1629.8335
 21,1,25.8,0,0,southwest,2007.945
-61,1,29.07,0,1,northwest,29141.3603

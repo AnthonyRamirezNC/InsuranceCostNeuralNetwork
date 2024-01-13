@@ -3,31 +3,15 @@ import tensorflow
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler
-from keras.models import Sequential
-from keras.layers import InputLayer
-from keras.layers import Dense
-from keras.optimizers import Adam
-from keras.layers import LeakyReLU
+from sklearn.tree import DecisionTreeRegressor
 import numpy as np
 
 tensorflow.random.set_seed(35) #for the reproducibility of results
 
-def design_model(features):
-  model = Sequential(name = "my_first_model")
-  #without hard-coding
-  input = InputLayer(input_shape=(features.shape[1],)) 
-  #add the input layer
-  model.add(input) 
-  #add a hidden layer with 64 neurons using leaky Relu
-  model.add(Dense(64))
-  model.add(LeakyReLU(alpha=0.01))
-
-  #add another hidden layer using regular relu
-  model.add(Dense(64, activation='relu'))
-  #add an output layer to our model
-  model.add(Dense(1)) 
-  opt = Adam(learning_rate=0.1)
-  model.compile(loss='mse',  metrics=['mae'], optimizer=opt)
+def design_model(trainX, trainY):
+  model = DecisionTreeRegressor()
+  # Fit the model to the training data using 500 epochs, and 1 batch size
+  model.fit(trainX, trainY)
   return model
 
 dataset = pd.read_csv('insurance.csv') #load the dataset
@@ -52,20 +36,28 @@ labels_test = labels_test.astype('float32')
 if np.isnan(features_train).any() or np.isnan(labels_train).any() or np.isinf(features_train).any() or np.isinf(labels_train).any():
     raise ValueError("Data contains NaN or Inf values.")
 
-# ... [rest of your code]
-
 # Invoke the function for our model design
-model = design_model(features_train)
+model = design_model(features_train, labels_train)
+# #evaluate the model on the test data
+# val_mse, val_mae = model.evaluate(features_test, labels_test, verbose = 0)
 
-# Before fitting the model, you can check the shapes of the data
-print("Training features shape:", features_train.shape)
-print("Training labels shape:", labels_train.shape)
+# print("MAE: ", val_mae)
 
-# Fit the model to the training data using 20 epochs, and 1 batch size
-model.fit(features_train, labels_train, batch_size=1, epochs=1000, verbose=1)
- 
-#evaluate the model on the test data
-val_mse, val_mae = model.evaluate(features_test, labels_test, verbose = 0)
- 
-print("MAE: ", val_mae)
+# #print model prediction function
+# print(model.pred)
+
+
+# make a prediction with the model using example data
+# print('predicting cost with the following data:')
+# print("age: 61")
+# print("sex: 1")
+# print("bmi: 29.07")
+# print("children: 0")
+# print("smoker: 1")
+# print("region: northwest")
+# X = pd.read_csv("test.csv")
+# X = ct.transform(X)
+print(model.predict(features_test))
+
+print("Answers: \n" + str(labels_test))
 
